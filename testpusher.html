@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>title</title>
+</head>
+
+<body>
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+        <style>
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            td,
+            th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+
+            tr:nth-child(even) {
+                background-color: #dddddd;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h2>Expiry Batch Info</h2>
+        <div id='content'></div>
+    </body>
+
+    </html>
+
+</body>
+<script src="https://js.pusher.com/5.0/pusher.min.js"></script>
+<script>
+    const pusher = new Pusher('818d8d76a4f543907b71', {
+        encrypted: true,
+        cluster: 'ap2',
+    });
+
+    const Notifchannel = pusher.subscribe('notification-channel');
+    Notifchannel.bind("expiry-notification-event", function (data) {
+        data.message.forEach((e) => {
+            document.getElementById("content").appendChild(buildTable(data.message));
+        })
+    });
+    var table = document.createElement("table");
+    table.className = "gridtable";
+    var thead = document.createElement("thead");
+    var tbody = document.createElement("tbody");
+    var headRow = document.createElement("tr");
+    ["Batch No", "Product", "Outlet", 'Expiry date'].forEach(function (el) {
+        var th = document.createElement("th");
+        th.appendChild(document.createTextNode(el));
+        headRow.appendChild(th);
+    });
+    function buildTable(data) {
+        thead.appendChild(headRow);
+        table.appendChild(thead);
+        data.forEach(function (el) {
+            var tr = document.createElement("tr");
+            for (var o in el) {
+                var td = document.createElement("td");
+                td.appendChild(document.createTextNode(el[o]))
+                tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        return table;
+    }
+</script>
+
+</html>
